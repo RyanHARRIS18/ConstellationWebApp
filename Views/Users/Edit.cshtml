@@ -1,0 +1,79 @@
+﻿@model ConstellationWebApp.Models.User
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>User</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId" />
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Bio" class="control-label"></label>
+                <input asp-for="Bio" class="form-control" />
+                <span asp-validation-for="Bio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Seeking" class="control-label"></label>
+                <input asp-for="Seeking" class="form-control" />
+                <span asp-validation-for="Seeking" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageSource" class="control-label"></label>
+                <input asp-for="ImageSource" class="form-control" />
+                <span asp-validation-for="ImageSource" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactLinkOne" class="control-label"></label>
+                <input asp-for="ContactLinkOne" class="form-control" />
+                <span asp-validation-for="ContactLinkOne" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactLinkTwo" class="control-label"></label>
+                <input asp-for="ContactLinkTwo" class="form-control" />
+                <span asp-validation-for="ContactLinkTwo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactLinkThree" class="control-label"></label>
+                <input asp-for="ContactLinkThree" class="form-control" />
+                <span asp-validation-for="ContactLinkThree" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
