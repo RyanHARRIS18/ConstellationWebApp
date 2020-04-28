@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ConstellationWebApp.Data;
 using ConstellationWebApp.Models;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using ConstellationWebApp.ViewModels;
 
-namespace ConstellationWebApp.Controllers.NewFolder
+namespace ConstellationWebApp.Controllers
 {
     public class ProjectsController : Controller
     {
         private readonly ConstellationWebAppContext _context;
+        private readonly IWebHostEnvironment hostingEnvironment;
 
-        public ProjectsController(ConstellationWebAppContext context)
+        public ProjectsController(ConstellationWebAppContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
+            this.hostingEnvironment = hostingEnvironment;
         }
 
         // GET: Projects
@@ -52,17 +57,42 @@ namespace ConstellationWebApp.Controllers.NewFolder
         // POST: Projects/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //implementing the View controller following this tutorial https://www.youtube.com/watch?v=aoxEJii70_I
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProjectID,Title,Description,StartDate,EndDate,CreationDate,ImageSource,ProjectLinkOne,ProjectLinkTwo,ProjectLinkThree")] Project project)
+        public async Task<IActionResult> Create(ProjectCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(project);
+                string uniqueFileName = null;
+
+                if (model.Photo != null)
+                {
+                    string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath + "\\image\\");
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+                }
+
+                Project newProject = new Project
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    CreationDate = model.CreationDate,
+                    PhotoPath = uniqueFileName,
+                    ProjectLinkOne = model.ProjectLinkOne,
+                    ProjectLinkTwo = model.ProjectLinkTwo,
+                    ProjectLinkThree = model.ProjectLinkThree
+                 };
+
+                _context.Add(newProject);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(project);
+            return View();
         }
 
         // GET: Projects/Edit/5
@@ -86,7 +116,7 @@ namespace ConstellationWebApp.Controllers.NewFolder
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProjectID,Title,Description,StartDate,EndDate,CreationDate,ImageSource,ProjectLinkOne,ProjectLinkTwo,ProjectLinkThree")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("ProjectID,Title,Description,StartDate,EndDate,CreationDate,PhotoPath,ProjectLinkOne,ProjectLinkTwo,ProjectLinkThree")] Project project)
         {
             if (id != project.ProjectID)
             {

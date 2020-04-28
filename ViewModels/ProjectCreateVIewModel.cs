@@ -1,17 +1,16 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using ConstellationWebApp.Models;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
-namespace ConstellationWebApp.Models
+namespace ConstellationWebApp.ViewModels
 {
-    using Microsoft.AspNetCore.Http;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-
-    public class Project
+    public class ProjectCreateViewModel
     {
-         public int ProjectID { get; set; }
-
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters.")]
         [Required]
         public string Title { get; set; }
@@ -38,7 +37,7 @@ namespace ConstellationWebApp.Models
         [Display(Name = "Creation Date")]
         public DateTime CreationDate { get; set; }
 
-        public string PhotoPath { get; set; }
+        public IFormFile Photo { get; set; }
 
         // this REGEXP only ensure it is formated like and email; we must create an actual 
         // method to ensure that it is real
@@ -52,6 +51,4 @@ namespace ConstellationWebApp.Models
 
         public ICollection<UserProject> UserProjects { get; set; }
     }
-
-    }
-
+}

@@ -1,15 +1,14 @@
-﻿namespace ConstellationWebApp.Models
-{
-    using Microsoft.AspNetCore.Http;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-  
-    public partial class User
-    {
-      
+﻿using ConstellationWebApp.Models;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace ConstellationWebApp.ViewModels
+{
+    public class UserCreateViewModel
+    {
         public int UserId { get; set; }
 
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters.")]
@@ -54,7 +53,7 @@
 
 
         /*[RegularExpression("([0-9a-zA-Z :\\-_!@$%^&*()])+(.jpg|.JPG|.jpeg|.JPEG|.bmp|.BMP|.gif|.GIF|.psd|.PSD)$")]*/
-        public string PhotoPath { get; set; }
+        public IFormFile Photo { get; set; }
 
 
         // this REGEXP only ensure it is formated like and email; we must create an actual 
@@ -76,5 +75,3 @@
     }
 
 }
-
-

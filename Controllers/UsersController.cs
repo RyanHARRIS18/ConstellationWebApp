@@ -7,16 +7,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ConstellationWebApp.Data;
 using ConstellationWebApp.Models;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using ConstellationWebApp.ViewModels;
 
 namespace ConstellationWebApp.Controllers
 {
     public class UsersController : Controller
     {
         private readonly ConstellationWebAppContext _context;
+        private readonly IWebHostEnvironment hostingEnvironment;
 
-        public UsersController(ConstellationWebAppContext context)
+
+        public UsersController(ConstellationWebAppContext context, IWebHostEnvironment hostingEnvironment)
+
         {
             _context = context;
+            this.hostingEnvironment = hostingEnvironment;
+
         }
 
         // GET: Users
@@ -52,17 +60,45 @@ namespace ConstellationWebApp.Controllers
         // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+         //liekly could turn this into a 
+        //function that would need to loo through the list of properities of an object
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,UserName,Password,FirstName,LastName,Bio,Seeking,ImageSource,ContactLinkOne,ContactLinkTwo,ContactLinkThree")] User user)
+        public async Task<IActionResult> Create(UserCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
+                string uniqueFileName = null;
+
+                if (model.Photo != null)
+                {
+                    string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath + "\\image\\");
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+                }
+
+                User newUser = new User
+                {
+                    UserId = model.UserId,
+                    UserName = model.UserName,
+                    Password = model.Password,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Bio = model.Bio,
+                    Seeking = model.Seeking,
+                    PhotoPath = uniqueFileName,
+                    ContactLinkOne = model.ContactLinkOne,
+                    ContactLinkTwo = model.ContactLinkTwo,
+                    ContactLinkThree = model.ContactLinkThree
+                };
+
+                _context.Add(newUser);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return View();
         }
 
         // GET: Users/Edit/5
@@ -86,7 +122,7 @@ namespace ConstellationWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,UserName,Password,FirstName,LastName,Bio,Seeking,ImageSource,ContactLinkOne,ContactLinkTwo,ContactLinkThree")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,UserName,Password,FirstName,LastName,Bio,Seeking,PhotoPath,ContactLinkOne,ContactLinkTwo,ContactLinkThree")] User user)
         {
             if (id != user.UserId)
             {

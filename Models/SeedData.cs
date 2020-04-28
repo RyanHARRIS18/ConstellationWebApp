@@ -15,22 +15,22 @@ namespace ConstellationWebApp.Data
                     DbContextOptions<ConstellationWebAppContext>>()))
             {
                 // Look for any movies.
-                if (context.User.Any())
+             /*   if (context.User.Any())
                 {
                     return;   // DB has been seeded
                 }
-
+*/
                 context.User.AddRange(
 
-                     new User { UserName = "alcar123",  Password = "Carson1", FirstName = "Carson",  LastName = "Alexander",Bio = "history major",       Seeking = "Non-Paid Internship",              ImageSource = "", ContactLinkOne = "23ALEX@FAKE.gmail.com"       },
-                     new User { UserName = "Roland123", Password = "Roland1", FirstName = "Roland",  LastName = "Nepay",    Bio = "New to the Program",  Seeking = "Paid Internship",                  ImageSource = "", ContactLinkOne = "789Roland@FAKE.gmail.com"    },
-                     new User { UserName = "Dominic123",Password = "Dominic1",FirstName = "Dominic ",LastName = "Isiuwa",   Bio = "New to the Program",  Seeking = "Internship",                       ImageSource = "", ContactLinkOne = "789Dominic@FAKE.gmail.com"   },
-                     new User { UserName = "Nwokolo123",Password = "Nwokolo1",FirstName = "Nwokolo ",LastName = "Ony",      Bio = "Looking for projects",Seeking = "Lead Developer",                   ImageSource = "", ContactLinkOne = "789Nwokolo@FAKE.gmail.com"   },
-                     new User { UserName = "Jackson123",Password = "Jackson1",FirstName = "Jackson", LastName = "Dial",     Bio = "Stats Major",         Seeking = "Full Time Employment",             ImageSource = "", ContactLinkOne = "789Dial@FAKE.gmail.com"      },
-                     new User { UserName = "Ryan123",   Password = "Ryan1",   FirstName = "Ryan ",   LastName = "Harris",   Bio = "Intern",              Seeking = "Part Time Employment",             ImageSource = "", ContactLinkOne = "789Ryan@FAKE.gmail.com"      },
-                     new User { UserName = "David123",  Password = "David1",  FirstName = "David ",  LastName = "Miller",   Bio = "Teacher",             Seeking = "Aid students in thier Development",ImageSource = "", ContactLinkOne = "789Miller@FAKE.gmail.com"    },
-                     new User { UserName = "Kory123",   Password = "Kory1",   FirstName = "Kory ",   LastName = "Godfrey",  Bio = "Teacher",             Seeking = "Aid students in thier Development",ImageSource = "", ContactLinkOne = "789KoryG@FAKE.gmail.com"     },
-                     new User { UserName = "Sean123",   Password = "Sean1",   FirstName = "Sean ",   LastName = "Murdock",  Bio = "Teacher",             Seeking = "Aid students in thier Development",ImageSource = "", ContactLinkOne = "789SMurdock@FAKE.gmail.com"  }
+                     new User { UserName = "alcar123",  Password = "Carson1", FirstName = "Carson",  LastName = "Alexander",Bio = "history major",       Seeking = "Non-Paid Internship",               ContactLinkOne = "23ALEX@FAKE.gmail.com"       },
+                     new User { UserName = "Roland123", Password = "Roland1", FirstName = "Roland",  LastName = "Nepay",    Bio = "New to the Program",  Seeking = "Paid Internship",                   ContactLinkOne = "789Roland@FAKE.gmail.com"    },
+                     new User { UserName = "Dominic123",Password = "Dominic1",FirstName = "Dominic ",LastName = "Isiuwa",   Bio = "New to the Program",  Seeking = "Internship",                        ContactLinkOne = "789Dominic@FAKE.gmail.com"   },
+                     new User { UserName = "Nwokolo123",Password = "Nwokolo1",FirstName = "Nwokolo ",LastName = "Ony",      Bio = "Looking for projects",Seeking = "Lead Developer",                    ContactLinkOne = "789Nwokolo@FAKE.gmail.com"   },
+                     new User { UserName = "Jackson123",Password = "Jackson1",FirstName = "Jackson", LastName = "Dial",     Bio = "Stats Major",         Seeking = "Full Time Employment",              ContactLinkOne = "789Dial@FAKE.gmail.com"      },
+                     new User { UserName = "Ryan123",   Password = "Ryan1",   FirstName = "Ryan ",   LastName = "Harris",   Bio = "Intern",              Seeking = "Part Time Employment",              ContactLinkOne = "789Ryan@FAKE.gmail.com"      },
+                     new User { UserName = "David123",  Password = "David1",  FirstName = "David ",  LastName = "Miller",   Bio = "Teacher",             Seeking = "Aid students in thier Development", ContactLinkOne = "789Miller@FAKE.gmail.com"    },
+                     new User { UserName = "Kory123",   Password = "Kory1",   FirstName = "Kory ",   LastName = "Godfrey",  Bio = "Teacher",             Seeking = "Aid students in thier Development", ContactLinkOne = "789KoryG@FAKE.gmail.com"     },
+                     new User { UserName = "Sean123",   Password = "Sean1",   FirstName = "Sean ",   LastName = "Murdock",  Bio = "Teacher",             Seeking = "Aid students in thier Development", ContactLinkOne = "789SMurdock@FAKE.gmail.com"  }
                 );
                 context.SaveChanges();
 

@@ -7,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ConstellationWebApp.Models;
+using ConstellationWebApp.Data;
+
 
 namespace ConstellationWebApp
 {
@@ -23,7 +26,7 @@ namespace ConstellationWebApp
 
                 try
                 {
-                    // SeedData.Initialize(services);
+                    SeedData.Initialize(services);
                 }
                 catch (Exception ex)
                 {

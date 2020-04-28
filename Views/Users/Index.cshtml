@@ -7,83 +7,74 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create New Users</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Bio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Seeking)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageSource)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContactLinkOne)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContactLinkTwo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContactLinkThree)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Bio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Seeking)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageSource)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContactLinkOne)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContactLinkTwo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContactLinkThree)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
-            </td>
-        </tr>
+
+@* Take this to an actual css later *@
+<style>
+    .user-cards {
+        border: groove;
+        padding: 2em;
+        display: inline-block;
+    }
+</style>
+
+@foreach (var item in Model)
+{
+     var photoPath = "~/image/" + (item.PhotoPath);
+    <div class="user-cards">
+    <div>
+        <img class="imageThumbnail" src=" @photoPath" alt="@Html.DisplayFor(modelItem => item.UserName)" asp-append-version="true" />
+    </div>
+    <div>
+        @*@Html.DisplayNameFor(model => model.UserName) :*@
+
+        @Html.DisplayFor(modelItem => item.UserName)
+    </div>
+    @*<div>
+            @Html.DisplayNameFor(model => model.Password) :
+
+            @Html.DisplayFor(modelItem => item.Password)
+        </div>*@
+    <div>
+        @*@Html.DisplayNameFor(model => model.FirstName) :*@
+
+        @Html.DisplayFor(modelItem => item.FirstName)
+    </div>
+    <div>
+        @*@Html.DisplayNameFor(model => model.LastName) :*@
+
+        @Html.DisplayFor(modelItem => item.LastName)
+    </div>
+    <div>
+        @*@Html.DisplayNameFor(model => model.Bio) :*@
+
+        @Html.DisplayFor(modelItem => item.Bio)
+    </div>
+    <div>
+        @*@Html.DisplayNameFor(model => model.Seeking) :*@
+
+        @Html.DisplayFor(modelItem => item.Seeking)
+    </div>
+    <div>
+        @*@Html.DisplayNameFor(model => model.ContactLinkOne) :*@
+
+        @Html.DisplayFor(modelItem => item.ContactLinkOne)
+    </div>
+    <div>
+        @*@Html.DisplayNameFor(model => model.ContactLinkTwo) :*@
+
+        @Html.DisplayFor(modelItem => item.ContactLinkTwo)
+    </div>
+    <div>
+        @*@Html.DisplayNameFor(model => model.ContactLinkThree) :*@
+
+        @Html.DisplayFor(modelItem => item.ContactLinkThree)
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
+        <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
+        <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
+    </div>
+</div>
 }
-    </tbody>
-</table>
