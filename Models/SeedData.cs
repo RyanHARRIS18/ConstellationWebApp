@@ -15,11 +15,11 @@ namespace ConstellationWebApp.Data
                     DbContextOptions<ConstellationWebAppContext>>()))
             {
                 // Look for any movies.
-             /*   if (context.User.Any())
+                if (context.User.Any())
                 {
                     return;   // DB has been seeded
                 }
-*/
+
                 context.User.AddRange(
 
                      new User { UserName = "alcar123",  Password = "Carson1", FirstName = "Carson",  LastName = "Alexander",Bio = "history major",       Seeking = "Non-Paid Internship",               ContactLinkOne = "23ALEX@FAKE.gmail.com"       },
@@ -34,7 +34,7 @@ namespace ConstellationWebApp.Data
                 );
                 context.SaveChanges();
 
-                context.Project.AddRange(
+                context.Projects.AddRange(
                      new Project { Title = "alcar-Project1", Description = "Javascript App", StartDate = new DateTime(2008, 16, 2), ProjectLinkOne = "23ALEX@FAKE.gmail.com"      },
                      new Project { Title = "alcar-Project2", Description = "Javascript App", StartDate = new DateTime(2018, 16, 2), ProjectLinkOne = "23ALEX@FAKE.gmail.com"      },
                      new Project { Title = "alcar-Project3", Description = "Javascript App", StartDate = new DateTime(2020, 16, 2), ProjectLinkOne = "23ALEX@FAKE.gmail.com"      },

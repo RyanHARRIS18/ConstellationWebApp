@@ -7,68 +7,50 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New Users</a>
+    <a asp-action="Create">Create New User</a>
 </p>
+    @foreach (var item in Model)
+    {
+        var photoPath = "~/image/" + (item.PhotoPath);
 
-@* Take this to an actual css later *@
-<style>
-    .user-cards {
-        border: groove;
-        padding: 2em;
-        display: inline-block;
-    }
-</style>
-
-@foreach (var item in Model)
-{
-     var photoPath = "~/image/" + (item.PhotoPath);
-    <div class="user-cards">
+    <div class="project-cards">
+    @*Note: We do not want to display the PhotoPath Path but the image itself*@
     <div>
         <img class="imageThumbnail" src=" @photoPath" alt="@Html.DisplayFor(modelItem => item.UserName)" asp-append-version="true" />
     </div>
     <div>
-        @*@Html.DisplayNameFor(model => model.UserName) :*@
-
+        @Html.DisplayNameFor(modelItem => item.UserName) :
         @Html.DisplayFor(modelItem => item.UserName)
     </div>
-    @*<div>
-            @Html.DisplayNameFor(model => model.Password) :
-
-            @Html.DisplayFor(modelItem => item.Password)
-        </div>*@
     <div>
-        @*@Html.DisplayNameFor(model => model.FirstName) :*@
-
+        @Html.DisplayNameFor(modelItem => item.FirstName) :
         @Html.DisplayFor(modelItem => item.FirstName)
     </div>
     <div>
-        @*@Html.DisplayNameFor(model => model.LastName) :*@
-
+        @Html.DisplayNameFor(modelItem => item.LastName) :
         @Html.DisplayFor(modelItem => item.LastName)
+
     </div>
     <div>
-        @*@Html.DisplayNameFor(model => model.Bio) :*@
-
+        @Html.DisplayNameFor(modelItem => item.Bio) :
         @Html.DisplayFor(modelItem => item.Bio)
+
     </div>
     <div>
-        @*@Html.DisplayNameFor(model => model.Seeking) :*@
-
+        @Html.DisplayNameFor(modelItem => item.Seeking) :
         @Html.DisplayFor(modelItem => item.Seeking)
+
     </div>
     <div>
-        @*@Html.DisplayNameFor(model => model.ContactLinkOne) :*@
-
+        @Html.DisplayNameFor(modelItem => item.ContactLinkOne) :
         @Html.DisplayFor(modelItem => item.ContactLinkOne)
     </div>
     <div>
-        @*@Html.DisplayNameFor(model => model.ContactLinkTwo) :*@
-
+        @Html.DisplayNameFor(modelItem => item.ContactLinkTwo) :
         @Html.DisplayFor(modelItem => item.ContactLinkTwo)
     </div>
     <div>
-        @*@Html.DisplayNameFor(model => model.ContactLinkThree) :*@
-
+        @Html.DisplayNameFor(modelItem => item.ContactLinkThree) :
         @Html.DisplayFor(modelItem => item.ContactLinkThree)
     </div>
     <div>
@@ -76,5 +58,5 @@
         <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
         <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
     </div>
-</div>
-}
+    </div>
+    }

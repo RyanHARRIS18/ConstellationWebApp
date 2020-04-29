@@ -79,3 +79,18 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
+
+.smallThumbnail {
+    height: 50px;
+    width: auto;
+    display: inline;
+}
+
+.project-cards {
+    border: groove;
+    padding: 2em;
+    display: inline-block;
+}
+
+
+

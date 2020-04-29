@@ -8,8 +8,6 @@
   
     public partial class User
     {
-      
-
         public int UserId { get; set; }
 
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters.")]

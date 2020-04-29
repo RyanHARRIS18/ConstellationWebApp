@@ -1,31 +1,23 @@
-﻿@model IEnumerable<ConstellationWebApp.Models.Project>
+﻿@model ConstellationWebApp.Models.ViewModel
 
 @{
     ViewData["Title"] = "Projects Index";
-    ViewBag.Title = "Project Details";
 }
 
-<h1>Create</h1>
+<h1>Constellation Projects</h1>
 
 <p>
     <a asp-action="Create">Projects</a>
 </p>
 
 @* Take this to an actual css later *@
-<style>
-    .project-cards {
-        border: groove;
-        padding: 2em;
-        display: inline-block;
-    }
-</style>
 
 @*Note: We do not want to display when the data cell is empty. Only when populated*@
 @* Need to be solved: 
 
 *@
 
-@foreach (var item in Model.Where(itm => itm != null))
+@foreach (var item in Model.Projects)
 {
     var photoPath = "~/image/" + (item.PhotoPath);
 
@@ -35,37 +27,41 @@
         <img class="imageThumbnail" src=" @photoPath" alt="@Html.DisplayFor(modelItem => item.Title)" asp-append-version="true" />
     </div>
     <div>
-        @Html.DisplayNameFor(model => model.Title) :
+        @Html.DisplayNameFor(modelItem => item.Title) :
         @Html.DisplayFor(modelItem => item.Title)
     </div>
     <div>
-        @Html.DisplayNameFor(model => model.Description) :
+        @Html.DisplayNameFor(modelItem => item.Description) :
         @Html.DisplayFor(modelItem => item.Description)
     </div>
     <div>
-        @Html.DisplayNameFor(model => model.StartDate) :
+        @Html.DisplayNameFor(modelItem => item.StartDate) :
         @Html.DisplayFor(modelItem => item.StartDate)
     </div>
     <div>
-        @Html.DisplayNameFor(model => model.EndDate) :
+        @Html.DisplayNameFor(modelItem => item.EndDate) :
         @Html.DisplayFor(modelItem => item.EndDate)
     </div>
     <div>
-        @Html.DisplayNameFor(model => model.CreationDate) :
+        @Html.DisplayNameFor(modelItem => item.CreationDate) :
         @Html.DisplayFor(modelItem => item.CreationDate)
     </div>
     <div>
-        @Html.DisplayNameFor(model => model.ProjectLinkOne) :
         @Html.DisplayFor(modelItem => item.ProjectLinkOne)
     </div>
     <div>
-        @Html.DisplayNameFor(model => model.ProjectLinkTwo) :
         @Html.DisplayFor(modelItem => item.ProjectLinkTwo)
     </div>
     <div>
-        @Html.DisplayNameFor(model => model.ProjectLinkThree) :
         @Html.DisplayFor(modelItem => item.ProjectLinkThree)
     </div>
+    @foreach (var collab in item.UserProjects)
+    {
+         var collabPath = "~/image/" + (collab.User.PhotoPath);
+         @*@collab.User.UserName<br />*@
+        <img class="smallThumbnail" src=" @collabPath" alt="@Html.DisplayFor(modelItem => item.Title)" asp-append-version="true" />
+    }
+
     <div>
         <a asp-action="Edit" asp-route-id="@item.ProjectID">Edit</a> |
         <a asp-action="Details" asp-route-id="@item.ProjectID">Details</a> |

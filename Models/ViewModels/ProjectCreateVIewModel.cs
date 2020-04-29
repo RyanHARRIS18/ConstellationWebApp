@@ -49,6 +49,8 @@ namespace ConstellationWebApp.ViewModels
 
         public string ProjectLinkThree { get; set; }
 
-        public ICollection<UserProject> UserProjects { get; set; }
+        public string UserName { get; set; }
+
+
     }
 }

@@ -15,8 +15,7 @@ namespace ConstellationWebApp.Data
             }
 
          public DbSet<User> User { get; set; }
-        public DbSet<Project> Project { get; set; }
-
+        public DbSet<Project> Projects { get; set; }
         public DbSet<UserProject> UserProjects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -10,9 +10,11 @@ using ConstellationWebApp.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using ConstellationWebApp.ViewModels;
+using System.Dynamic;
 
 namespace ConstellationWebApp.Controllers
 {
+   
     public class ProjectsController : Controller
     {
         private readonly ConstellationWebAppContext _context;
@@ -24,11 +26,18 @@ namespace ConstellationWebApp.Controllers
             this.hostingEnvironment = hostingEnvironment;
         }
 
-        // GET: Projects
+        // Get Projects
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Project.ToListAsync());
-        }
+            var viewModel = new ViewModel();
+            viewModel.Projects = await _context.Projects
+                   .Include(i => i.UserProjects)
+                     .ThenInclude(i => i.User)
+                   .AsNoTracking()
+                   .OrderBy(i => i.CreationDate)
+                   .ToListAsync();
+            return View(viewModel);
+    }
 
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -38,7 +47,7 @@ namespace ConstellationWebApp.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
+            var project = await _context.Projects
                 .FirstOrDefaultAsync(m => m.ProjectID == id);
             if (project == null)
             {
@@ -87,9 +96,28 @@ namespace ConstellationWebApp.Controllers
                     ProjectLinkTwo = model.ProjectLinkTwo,
                     ProjectLinkThree = model.ProjectLinkThree
                  };
-
                 _context.Add(newProject);
                 await _context.SaveChangesAsync();
+                
+                if (model.UserName != null)
+                {
+                    /* Query for the UserID where the Username is what we were given*/
+                    var UserId = (from m in _context.User
+                                 where model.UserName == m.UserName
+                                 select m.UserId).First();
+
+                    var ProjectId = newProject.ProjectID;
+                    
+                    UserProject newCollaborator = new UserProject
+                    {
+                        Projectid = ProjectId,
+                        UserId = UserId
+                    };
+                   
+                    _context.Add(newCollaborator);
+                }
+
+
                 return RedirectToAction(nameof(Index));
             }
             return View();
@@ -103,7 +131,7 @@ namespace ConstellationWebApp.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project.FindAsync(id);
+            var project = await _context.Projects.FindAsync(id);
             if (project == null)
             {
                 return NotFound();
@@ -154,7 +182,7 @@ namespace ConstellationWebApp.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
+            var project = await _context.Projects
                 .FirstOrDefaultAsync(m => m.ProjectID == id);
             if (project == null)
             {
@@ -169,15 +197,15 @@ namespace ConstellationWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var project = await _context.Project.FindAsync(id);
-            _context.Project.Remove(project);
+            var project = await _context.Projects.FindAsync(id);
+            _context.Projects.Remove(project);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProjectExists(int id)
         {
-            return _context.Project.Any(e => e.ProjectID == id);
+            return _context.Projects.Any(e => e.ProjectID == id);
         }
     }
 }
