@@ -43,7 +43,7 @@ namespace ConstellationWebApp.Controllers
             }
 
             var user = await _context.User
-                .FirstOrDefaultAsync(m => m.UserId == id);
+                .FirstOrDefaultAsync(m => m.UserID == id);
             if (user == null)
             {
                 return NotFound();
@@ -79,17 +79,14 @@ namespace ConstellationWebApp.Controllers
 
                     User newUser = new User
                     {             
-                        UserId           = model.UserId,
+                        UserID           = model.UserID,
                         UserName         = model.UserName,
                         Password         = model.Password,
                         FirstName        = model.FirstName,
                         LastName         = model.LastName,
                         Bio              = model.Bio,
                         Seeking          = model.Seeking,
-                        PhotoPath        = uniqueFileName,
-                        ContactLinkOne   = model.ContactLinkOne,
-                        ContactLinkTwo   = model.ContactLinkTwo,
-                        ContactLinkThree = model.ContactLinkThree
+                        PhotoPath        = uniqueFileName
                     };
                     _context.Add(newUser);
                     await _context.SaveChangesAsync();
@@ -119,9 +116,9 @@ namespace ConstellationWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,UserName,Password,FirstName,LastName,Bio,Seeking,PhotoPath,ContactLinkOne,ContactLinkTwo,ContactLinkThree")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserID,UserName,Password,FirstName,LastName,Bio,Seeking,PhotoPath,ContactLinkOne,ContactLinkTwo,ContactLinkThree")] User user)
         {
-            if (id != user.UserId)
+            if (id != user.UserID)
             {
                 return NotFound();
             }
@@ -135,7 +132,7 @@ namespace ConstellationWebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.UserId))
+                    if (!UserExists(user.UserID))
                     {
                         return NotFound();
                     }
@@ -158,7 +155,7 @@ namespace ConstellationWebApp.Controllers
             }
 
             var user = await _context.User
-                .FirstOrDefaultAsync(m => m.UserId == id);
+                .FirstOrDefaultAsync(m => m.UserID == id);
             if (user == null)
             {
                 return NotFound();
@@ -180,7 +177,7 @@ namespace ConstellationWebApp.Controllers
 
         private bool UserExists(int id)
         {
-            return _context.User.Any(e => e.UserId == id);
+            return _context.User.Any(e => e.UserID == id);
         }
     }
 }

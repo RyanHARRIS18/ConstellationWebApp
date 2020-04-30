@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 
 namespace ConstellationWebApp.Models
 {
-    public class UserProject
+    public class AssignedProjectData
     {
         public int UserID { get; set; }
-        public User User { get; set; }
-        public int ProjectID { get; set; }
-        public Project Project { get; set; }
+        public string UserName { get; set; }
+        public bool Assigned { get; set; }
     }
 }

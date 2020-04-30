@@ -42,21 +42,9 @@
 
     </div>
     <div>
-        @Html.DisplayNameFor(modelItem => item.ContactLinkOne) :
-        @Html.DisplayFor(modelItem => item.ContactLinkOne)
-    </div>
-    <div>
-        @Html.DisplayNameFor(modelItem => item.ContactLinkTwo) :
-        @Html.DisplayFor(modelItem => item.ContactLinkTwo)
-    </div>
-    <div>
-        @Html.DisplayNameFor(modelItem => item.ContactLinkThree) :
-        @Html.DisplayFor(modelItem => item.ContactLinkThree)
-    </div>
-    <div>
-        <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
-        <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
-        <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
+        <a asp-action="Edit" asp-route-id="@item.UserID">Edit</a> |
+        <a asp-action="Details" asp-route-id="@item.UserID">Details</a> |
+        <a asp-action="Delete" asp-route-id="@item.UserID">Delete</a>
     </div>
     </div>
     }

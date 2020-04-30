@@ -37,7 +37,7 @@ namespace ConstellationWebApp.Controllers
             var userProject = await _context.UserProjects
                 .Include(u => u.Project)
                 .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.UserId == id);
+                .FirstOrDefaultAsync(m => m.UserID == id);
             if (userProject == null)
             {
                 return NotFound();
@@ -49,8 +49,8 @@ namespace ConstellationWebApp.Controllers
         // GET: UserProjects/Create
         public IActionResult Create()
         {
-            ViewData["Projectid"] = new SelectList(_context.Projects, "ProjectID", "Description");
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "Bio");
+            ViewData["ProjectID"] = new SelectList(_context.Projects, "ProjectID", "Description");
+            ViewData["UserID"] = new SelectList(_context.User, "UserID", "Bio");
             return View();
         }
 
@@ -59,7 +59,7 @@ namespace ConstellationWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Projectid")] UserProject userProject)
+        public async Task<IActionResult> Create([Bind("UserID,ProjectID")] UserProject userProject)
         {
             if (ModelState.IsValid)
             {
@@ -67,8 +67,8 @@ namespace ConstellationWebApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Projectid"] = new SelectList(_context.Projects, "ProjectID", "Description", userProject.Projectid);
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "Bio", userProject.UserId);
+            ViewData["ProjectID"] = new SelectList(_context.Projects, "ProjectID", "Description", userProject.ProjectID);
+            ViewData["UserID"] = new SelectList(_context.User, "UserID", "Bio", userProject.UserID);
             return View(userProject);
         }
 
@@ -85,8 +85,8 @@ namespace ConstellationWebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["Projectid"] = new SelectList(_context.Projects, "ProjectID", "Description", userProject.Projectid);
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "Bio", userProject.UserId);
+            ViewData["ProjectID"] = new SelectList(_context.Projects, "ProjectID", "Description", userProject.ProjectID);
+            ViewData["UserID"] = new SelectList(_context.User, "UserID", "Bio", userProject.UserID);
             return View(userProject);
         }
 
@@ -95,9 +95,9 @@ namespace ConstellationWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Projectid")] UserProject userProject)
+        public async Task<IActionResult> Edit(int id, [Bind("UserID,ProjectID")] UserProject userProject)
         {
-            if (id != userProject.UserId)
+            if (id != userProject.UserID)
             {
                 return NotFound();
             }
@@ -111,7 +111,7 @@ namespace ConstellationWebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserProjectExists(userProject.UserId))
+                    if (!UserProjectExists(userProject.UserID))
                     {
                         return NotFound();
                     }
@@ -122,8 +122,8 @@ namespace ConstellationWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Projectid"] = new SelectList(_context.Projects, "ProjectID", "Description", userProject.Projectid);
-            ViewData["UserId"] = new SelectList(_context.User, "UserId", "Bio", userProject.UserId);
+            ViewData["ProjectID"] = new SelectList(_context.Projects, "ProjectID", "Description", userProject.ProjectID);
+            ViewData["UserID"] = new SelectList(_context.User, "UserID", "Bio", userProject.UserID);
             return View(userProject);
         }
 
@@ -138,7 +138,7 @@ namespace ConstellationWebApp.Controllers
             var userProject = await _context.UserProjects
                 .Include(u => u.Project)
                 .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.UserId == id);
+                .FirstOrDefaultAsync(m => m.UserID == id);
             if (userProject == null)
             {
                 return NotFound();
@@ -160,7 +160,7 @@ namespace ConstellationWebApp.Controllers
 
         private bool UserProjectExists(int id)
         {
-            return _context.UserProjects.Any(e => e.UserId == id);
+            return _context.UserProjects.Any(e => e.UserID == id);
         }
     }
 }

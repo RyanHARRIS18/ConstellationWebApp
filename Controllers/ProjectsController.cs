@@ -57,9 +57,34 @@ namespace ConstellationWebApp.Controllers
             return View(project);
         }
 
+        private void PopulateAssignedProjectData(Project newProject)
+        {
+            var allUsers = _context.User;
+            var userProjects = new HashSet<int>(newProject.UserProjects.Select(c => c.UserID));
+            var viewModel = new List<AssignedProjectData>();
+            foreach (var users in allUsers)
+            {
+                viewModel.Add(new AssignedProjectData
+                {
+                    UserID = users.UserID,
+                    UserName = users.UserName,
+                    Assigned = userProjects.Contains(users.UserID)
+                });
+            }
+            ViewData["UsersOfConstellation"] = viewModel;
+        }
+
+        private void ChangeViewModelToEntityModel(Project newProject)
+        {
+          
+        }
+
         // GET: Projects/Create
         public IActionResult Create()
         {
+            var project = new Project();
+            project.UserProjects = new List<UserProject>();
+            PopulateAssignedProjectData(project);
             return View();
         }
 
@@ -70,11 +95,13 @@ namespace ConstellationWebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProjectCreateViewModel model)
+        public async Task<IActionResult> Create(ProjectCreateViewModel model, string[] selectedCollaborators)
         {
             if (ModelState.IsValid)
             {
                 string uniqueFileName = null;
+
+                /*For Photo Upload to system. Then takes ViewModel properties and converts to Entity Model properties. Then commits*/
 
                 if (model.Photo != null)
                 {
@@ -83,42 +110,35 @@ namespace ConstellationWebApp.Controllers
                     string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                     model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
                 }
-
                 Project newProject = new Project
                 {
                     Title = model.Title,
                     Description = model.Description,
                     StartDate = model.StartDate,
                     EndDate = model.EndDate,
-                    CreationDate = model.CreationDate,
-                    PhotoPath = uniqueFileName,
-                    ProjectLinkOne = model.ProjectLinkOne,
-                    ProjectLinkTwo = model.ProjectLinkTwo,
-                    ProjectLinkThree = model.ProjectLinkThree
+                    CreationDate = DateTime.Now,
+                    PhotoPath = uniqueFileName
                  };
                 _context.Add(newProject);
                 await _context.SaveChangesAsync();
-                
-                if (model.UserName != null)
+
+/*For Selecting all Possible Users and converting viewmodel properties to entity model properties. Does require the newly create project obj. Then commits*/
+                if (selectedCollaborators != null)
                 {
-                    /* Query for the UserID where the Username is what we were given*/
-                    var UserId = (from m in _context.User
-                                 where model.UserName == m.UserName
-                                 select m.UserId).First();
-
-                    var ProjectId = newProject.ProjectID;
-                    
-                    UserProject newCollaborator = new UserProject
+                    model.UserProjects = new List<UserProject>();
+                    foreach (var user in selectedCollaborators)
                     {
-                        Projectid = ProjectId,
-                        UserId = UserId
-                    };
-                   
-                    _context.Add(newCollaborator);
-                }
-
-
-                return RedirectToAction(nameof(Index));
+                        UserProject userProjects = new UserProject
+                        {
+                            ProjectID = newProject.ProjectID,
+                            UserID = int.Parse(user)
+                        };
+                        _context.Add(userProjects);
+                    }
+                   await _context.SaveChangesAsync();
+                   return RedirectToAction(nameof(Index));
+                    }
+              PopulateAssignedProjectData(newProject);
             }
             return View();
         }
@@ -131,12 +151,29 @@ namespace ConstellationWebApp.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
+            var entityProjectModel = await _context.Projects
+                .Include(i => i.UserProjects)
+                .ThenInclude(i => i.User)
+                .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.ProjectID == id);
+
+            if (entityProjectModel == null)
             {
                 return NotFound();
             }
-            return View(project);
+            PopulateAssignedProjectData(entityProjectModel);
+
+            ProjectCreateViewModel viewModel = new ProjectCreateViewModel
+            {
+                Title = entityProjectModel.Title,
+                Description = entityProjectModel.Description,
+                StartDate = entityProjectModel.StartDate,
+                EndDate = entityProjectModel.EndDate,
+                CreationDate = entityProjectModel.CreationDate
+            };
+
+            var photoPath = entityProjectModel.PhotoPath;
+            return View(viewModel);
         }
 
         // POST: Projects/Edit/5

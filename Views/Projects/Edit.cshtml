@@ -1,74 +1,101 @@
-﻿@model ConstellationWebApp.Models.Project
+﻿@* Create Project Page should be accesible from each user page and should be itegrated into thenavigation bar - it should automatically create a collaborator from the current user ID *@
+@model ConstellationWebApp.ViewModels.ProjectCreateViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Create";
+
+    //List<ConstellationWebApp.Models.Project> project = ViewBag.ProjectViewBag;
+    // var photoPath = "~/image/" + project.PhotoPath;
 }
 
-<h1>Edit</h1>
+<h1>Edit Project</h1>
+@*<div class="imageThumbnail">
+    @{
+     <img class="imageThumbnail" src=" @photoPath" alt="@Html.DisplayFor(model => model.Title)" asp-append-version="true" />
+    }
+</div>*@
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="StartDate" class="control-label"></label>
+                    <input asp-for="StartDate" class="form-control" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EndDate" class="control-label"></label>
+                    <input asp-for="EndDate" class="form-control" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Photo" class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        <div class="custom-file">
+                            <input asp-for="Photo" class="form-control custom-file-input" />
+                            <label class="custom-file-label">Replace Project Photo ...</label>
+                        </div>
+                    </div>
+                </div>
 
-<h4>Project</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ProjectID" />
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreationDate" class="control-label"></label>
-                <input asp-for="CreationDate" class="form-control" />
-                <span asp-validation-for="CreationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhotoPath" class="control-label"></label>
-                <input asp-for="PhotoPath" class="form-control" />
-                <span asp-validation-for="PhotoPath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProjectLinkOne" class="control-label"></label>
-                <input asp-for="ProjectLinkOne" class="form-control" />
-                <span asp-validation-for="ProjectLinkOne" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProjectLinkTwo" class="control-label"></label>
-                <input asp-for="ProjectLinkTwo" class="form-control" />
-                <span asp-validation-for="ProjectLinkTwo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProjectLinkThree" class="control-label"></label>
-                <input asp-for="ProjectLinkThree" class="form-control" />
-                <span asp-validation-for="ProjectLinkThree" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <table>
+                            <tr>
+                                @{
+                                    int cnt = 0;
+                                    List<ConstellationWebApp.Models.AssignedProjectData> users = ViewBag.UsersOfConstellation;
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+                                    foreach (var user in users)
+                                    {
+                                        if (cnt++ % 3 == 0)
+                                        {
+                                        @:</tr><tr>
+                                        }
+                                        @:<td>
+                                            <input type="checkbox"
+                                                   name="selectedCollaborators"
+                                                   value="@user.UserID"
+                                                   @(Html.Raw(user.Assigned ? "checked=\"checked\"" : "")) />
+                                            @user.UserName
+                                        @:</td>
+                                    }
+                                @:</tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+                <div>
+                    <a asp-action="Index">Back to List</a>
+                </div>
+            </div>
+        </div>
+
+
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+                    $('.custom-file-input').on("change", function () {
+                        var fileName = $(this).val().split("\\").pop();
+                        $(this).next('.custom-file-label').html(fileName);
+                    });
+            </script>
+
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }

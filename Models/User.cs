@@ -8,7 +8,7 @@
   
     public partial class User
     {
-        public int UserId { get; set; }
+        public int UserID { get; set; }
 
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters.")]
         [Required]
@@ -58,17 +58,8 @@
         // this REGEXP only ensure it is formated like and email; we must create an actual 
         // method to ensure that it is real
 
-        [Required]
-        [RegularExpression(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*")]
-        public string ContactLinkOne { get; set; }
+        public virtual ICollection<ContactLink> ContactLinks { get; set; }
 
-
-        [RegularExpression(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*")]
-        public string ContactLinkTwo { get; set; }
-
-
-        [RegularExpression(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*")]
-        public string ContactLinkThree { get; set; }
 
         public ICollection<UserProject> UserProjects { get; set; }
     }

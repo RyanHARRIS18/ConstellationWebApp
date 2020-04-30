@@ -46,15 +46,6 @@
         @Html.DisplayNameFor(modelItem => item.CreationDate) :
         @Html.DisplayFor(modelItem => item.CreationDate)
     </div>
-    <div>
-        @Html.DisplayFor(modelItem => item.ProjectLinkOne)
-    </div>
-    <div>
-        @Html.DisplayFor(modelItem => item.ProjectLinkTwo)
-    </div>
-    <div>
-        @Html.DisplayFor(modelItem => item.ProjectLinkThree)
-    </div>
     @foreach (var collab in item.UserProjects)
     {
          var collabPath = "~/image/" + (collab.User.PhotoPath);

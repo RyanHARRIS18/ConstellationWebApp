@@ -31,26 +31,16 @@ namespace ConstellationWebApp.ViewModels
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "End Date")]
         public DateTime EndDate { get; set; }
-
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Creation Date")]
         public DateTime CreationDate { get; set; }
 
         public IFormFile Photo { get; set; }
 
+        public ICollection<UserProject> UserProjects { get; set; }
+
         // this REGEXP only ensure it is formated like and email; we must create an actual 
         // method to ensure that it is real
-        [Required]
-        public string ProjectLinkOne { get; set; }
 
-        public string ProjectLinkTwo { get; set; }
-
-
-        public string ProjectLinkThree { get; set; }
-
-        public string UserName { get; set; }
-
+        /* public string UserName { get; set; }*/
 
     }
 }

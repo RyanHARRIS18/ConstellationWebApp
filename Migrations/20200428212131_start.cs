@@ -32,7 +32,7 @@ namespace ConstellationWebApp.Migrations
                 name: "User",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(nullable: false)
+                    UserID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(maxLength: 50, nullable: false),
                     Password = table.Column<string>(nullable: false),
@@ -47,37 +47,37 @@ namespace ConstellationWebApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.UserId);
+                    table.PrimaryKey("PK_User", x => x.UserID);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserProjects",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(nullable: false),
-                    Projectid = table.Column<int>(nullable: false)
+                    UserID = table.Column<int>(nullable: false),
+                    ProjectID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserProjects", x => new { x.UserId, x.Projectid });
+                    table.PrimaryKey("PK_UserProjects", x => new { x.UserID, x.ProjectID });
                     table.ForeignKey(
-                        name: "FK_UserProjects_Project_Projectid",
-                        column: x => x.Projectid,
+                        name: "FK_UserProjects_Project_ProjectID",
+                        column: x => x.ProjectID,
                         principalTable: "Project",
                         principalColumn: "ProjectID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserProjects_User_UserId",
-                        column: x => x.UserId,
+                        name: "FK_UserProjects_User_UserID",
+                        column: x => x.UserID,
                         principalTable: "User",
-                        principalColumn: "UserId",
+                        principalColumn: "UserID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProjects_Projectid",
+                name: "IX_UserProjects_ProjectID",
                 table: "UserProjects",
-                column: "Projectid");
+                column: "ProjectID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

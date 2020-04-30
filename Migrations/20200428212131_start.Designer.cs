@@ -67,7 +67,7 @@ namespace ConstellationWebApp.Migrations
 
             modelBuilder.Entity("ConstellationWebApp.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -114,22 +114,22 @@ namespace ConstellationWebApp.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserID");
 
                     b.ToTable("User");
                 });
 
             modelBuilder.Entity("ConstellationWebApp.Models.UserProject", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.Property<int>("Projectid")
+                    b.Property<int>("ProjectID")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "Projectid");
+                    b.HasKey("UserID", "ProjectID");
 
-                    b.HasIndex("Projectid");
+                    b.HasIndex("ProjectID");
 
                     b.ToTable("UserProjects");
                 });
@@ -138,13 +138,13 @@ namespace ConstellationWebApp.Migrations
                 {
                     b.HasOne("ConstellationWebApp.Models.Project", "Project")
                         .WithMany("UserProjects")
-                        .HasForeignKey("Projectid")
+                        .HasForeignKey("ProjectID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ConstellationWebApp.Models.User", "User")
                         .WithMany("UserProjects")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

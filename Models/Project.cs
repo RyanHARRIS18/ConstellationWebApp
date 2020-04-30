@@ -40,15 +40,11 @@ namespace ConstellationWebApp.Models
 
         public string PhotoPath { get; set; }
 
+        public int ProjectLinkID { get; set; }
+
         // this REGEXP only ensure it is formated like and email; we must create an actual 
         // method to ensure that it is real
-        [Required]
-        public string ProjectLinkOne { get; set; }
-
-        public string ProjectLinkTwo { get; set; }
-
-
-        public string ProjectLinkThree { get; set; }
+        public virtual ICollection<ProjectLink> ProjectLinks { get; set; }
 
         public ICollection<UserProject> UserProjects { get; set; }
     }

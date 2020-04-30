@@ -24,15 +24,20 @@ namespace ConstellationWebApp.Data
             modelBuilder.Entity<Project>().ToTable("Project");
 
             modelBuilder.Entity<UserProject>()
-       .HasKey(bc => new { bc.UserId, bc.Projectid });
+       .HasKey(bc => new { bc.UserID, bc.ProjectID });
             modelBuilder.Entity<UserProject>()
                 .HasOne(bc => bc.Project)
                 .WithMany(b => b.UserProjects)
-                .HasForeignKey(bc => bc.UserId);
+                .HasForeignKey(bc => bc.UserID);
             modelBuilder.Entity<UserProject>()
                 .HasOne(bc => bc.Project)
                 .WithMany(c => c.UserProjects)
-                .HasForeignKey(bc => bc.Projectid);
+                .HasForeignKey(bc => bc.ProjectID);
+
+       /*    modelBuilder.Entity<ProjecLink>()
+            .HasOne<Project>(s => s.Project)
+            .WithMany(g => g.Projects)
+            .HasForeignKey(s => s.ProjectLinkID);*/
         }
     }
     
