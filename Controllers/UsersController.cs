@@ -63,7 +63,7 @@ namespace ConstellationWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserCreateViewModel model)
+        public async Task<IActionResult> Create(UserCreateViewModel model, string[] createdLinkLabels, string[] createdLinkUls)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,33 @@ namespace ConstellationWebApp.Controllers
                         Seeking          = model.Seeking,
                         PhotoPath        = uniqueFileName
                     };
-                    _context.Add(newUser);
+
+                if (createdLinkLabels != null)
+                {
+                    var linkData = createdLinkLabels.Join(createdLinkUls, label => label, url => url, (label, url) => new { labelCol = label, urlCol = url });
+
+                    foreach (var link in linkData)
+                    {
+
+                        try
+                        {
+                            ContactLink contactLink = new ContactLink
+                            {
+                                ContactLinkLabel = link.labelCol,
+                                ContactLinkUrl = link.urlCol
+                            };
+
+                            _context.Add(contactLink);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (InvalidOperationException e)
+                        {
+                            Console.WriteLine($"The link or label was not found or was not in valid format: '{e}'");
+                        }
+
+                    }
+                }
+                _context.Add(newUser);
                     await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

@@ -52,6 +52,18 @@
                 </div>
             </div>
 
+            @* Create the Contact Links for the User *@
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+
+                    <input list='contact-link-label' name='createdLinkLabels'>
+                    <input list='contact-link-url' name='createdLinkUls'>
+
+                    <div id="demo"></div>
+                    <input type="button" id="more_fields" onclick="add_fields();" value="Add Link" />
+                </div>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -71,6 +83,14 @@
                 $(this).next('.custom-file-label').html(fileName);
             });
     </script>
+
+    <script>
+        function add_fields() {
+            document.getElementById("demo").innerHTML += "<input list='contact-link-label' name='selectedCollaborators'><input list='contact-link-url' name='selectedCollaborators'>";
+
+        }
+    </script>
+
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
