@@ -33,9 +33,12 @@ namespace ConstellationWebApp.ViewModels
         public DateTime EndDate { get; set; }
         public DateTime CreationDate { get; set; }
 
+        public string PhotoPath { get; set; }
         public IFormFile Photo { get; set; }
 
         public ICollection<UserProject> UserProjects { get; set; }
+
+        public string SearchString { get; set; }
 
         // this REGEXP only ensure it is formated like and email; we must create an actual 
         // method to ensure that it is real

@@ -7,7 +7,7 @@
 <h1>Constellation Projects</h1>
 
 <p>
-    <a asp-action="Create">Projects</a>
+    <a asp-action="Create">Creat A New Project</a>
 </p>
 
 @* Take this to an actual css later *@
@@ -46,6 +46,7 @@
         @Html.DisplayNameFor(modelItem => item.CreationDate) :
         @Html.DisplayFor(modelItem => item.CreationDate)
     </div>
+    <h4>Collaborators</h4>
     @foreach (var collab in item.UserProjects)
     {
          var collabPath = "~/image/" + (collab.User.PhotoPath);

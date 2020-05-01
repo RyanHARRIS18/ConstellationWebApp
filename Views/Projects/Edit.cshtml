@@ -4,16 +4,16 @@
 @{
     ViewData["Title"] = "Create";
 
-    //List<ConstellationWebApp.Models.Project> project = ViewBag.ProjectViewBag;
-    // var photoPath = "~/image/" + project.PhotoPath;
+    List<ConstellationWebApp.Models.Project> project = ViewBag.ProjectViewBag;
+    var photoPath = "~/image/" + Model.PhotoPath;
 }
 
 <h1>Edit Project</h1>
-@*<div class="imageThumbnail">
+<div class="imageThumbnail">
     @{
      <img class="imageThumbnail" src=" @photoPath" alt="@Html.DisplayFor(model => model.Title)" asp-append-version="true" />
     }
-</div>*@
+</div>
     <hr />
     <div class="row">
         <div class="col-md-4">

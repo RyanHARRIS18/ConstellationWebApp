@@ -74,24 +74,26 @@ namespace ConstellationWebApp.Controllers
             ViewData["UsersOfConstellation"] = viewModel;
         }
 
-        private void ChangeViewModelToEntityModel(Project newProject)
-        {
-          
-        }
 
         // GET: Projects/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(string SearchString)
         {
+            var users = from m in _context.User
+                        select m;
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                users = users.Where(s => s.UserName.Contains(SearchString));
+            }
             var project = new Project();
             project.UserProjects = new List<UserProject>();
             PopulateAssignedProjectData(project);
             return View();
         }
 
-        // POST: Projects/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //implementing the View controller following this tutorial https://www.youtube.com/watch?v=aoxEJii70_I
+// POST: Projects/Create
+// To protect from overposting attacks, enable the specific properties you want to bind to, for 
+// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+//implementing the View controller following this tutorial https://www.youtube.com/watch?v=aoxEJii70_I
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -101,7 +103,8 @@ namespace ConstellationWebApp.Controllers
             {
                 string uniqueFileName = null;
 
-                /*For Photo Upload to system. Then takes ViewModel properties and converts to Entity Model properties. Then commits*/
+/*For Photo Upload to system. Then takes ViewModel properties 
+ * and converts to Entity Model properties. Then commits*/
 
                 if (model.Photo != null)
                 {
@@ -122,18 +125,35 @@ namespace ConstellationWebApp.Controllers
                 _context.Add(newProject);
                 await _context.SaveChangesAsync();
 
-/*For Selecting all Possible Users and converting viewmodel properties to entity model properties. Does require the newly create project obj. Then commits*/
+                /*For Selecting all Possible Users and converting viewmodel 
+                 * properties to entity model properties. 
+                 * Does require the newly create project obj. Then commits*/
                 if (selectedCollaborators != null)
                 {
+
                     model.UserProjects = new List<UserProject>();
                     foreach (var user in selectedCollaborators)
                     {
-                        UserProject userProjects = new UserProject
+                        try
                         {
-                            ProjectID = newProject.ProjectID,
-                            UserID = int.Parse(user)
-                        };
-                        _context.Add(userProjects);
+                            var userid = (from a in _context.User
+                                          where a.UserName == user
+                                          select a).First<User>().UserID;
+                            
+                            UserProject userProjects = new UserProject
+                            {
+                                ProjectID = newProject.ProjectID,
+                                UserID = userid
+                            };
+
+                            _context.Add(userProjects);
+                        }
+                        catch (InvalidOperationException e)
+                        {
+                            Console.WriteLine($"The user was not found: '{e}'");
+                        }
+
+                      
                     }
                    await _context.SaveChangesAsync();
                    return RedirectToAction(nameof(Index));
@@ -169,10 +189,9 @@ namespace ConstellationWebApp.Controllers
                 Description = entityProjectModel.Description,
                 StartDate = entityProjectModel.StartDate,
                 EndDate = entityProjectModel.EndDate,
-                CreationDate = entityProjectModel.CreationDate
+                CreationDate = entityProjectModel.CreationDate,
+                PhotoPath = entityProjectModel.PhotoPath
             };
-
-            var photoPath = entityProjectModel.PhotoPath;
             return View(viewModel);
         }
 
