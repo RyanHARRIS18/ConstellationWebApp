@@ -192,6 +192,7 @@ namespace ConstellationWebApp.Controllers
             var entityProjectModel = await _context.Projects
                 .Include(i => i.UserProjects)
                 .ThenInclude(i => i.User)
+                .Include(i => i.ProjectLinkID)
                 .AsNoTracking()
             .FirstOrDefaultAsync(m => m.ProjectID == id);
 
@@ -218,9 +219,9 @@ namespace ConstellationWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProjectID,Title,Description,StartDate,EndDate,CreationDate,PhotoPath,ProjectLinkOne,ProjectLinkTwo,ProjectLinkThree")] Project project)
+        public async Task<IActionResult> Edit(int id, ProjectCreateViewModel model, string[] selectedCollaborators, string[] createdLinkLabels, string[] createdLinkUrls)
         {
-            if (id != project.ProjectID)
+            if (id != model.ProjectID)
             {
                 return NotFound();
             }
@@ -229,12 +230,20 @@ namespace ConstellationWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(project);
+                    var projectUpdate = await _context.Projects.FirstOrDefaultAsync(s => s.ProjectID == id);
+                    if (projectUpdate.ProjectID == 0)
+                    {
+                        _context.Add(projectUpdate);
+                    }
+                    else
+                    {
+                        _context.Update(projectUpdate);
+                    }
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectExists(project.ProjectID))
+                    if (!ProjectExists(model.ProjectID))
                     {
                         return NotFound();
                     }
@@ -245,7 +254,7 @@ namespace ConstellationWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(project);
+            return View(model);
         }
 
         // GET: Projects/Delete/5

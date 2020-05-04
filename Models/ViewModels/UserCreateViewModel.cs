@@ -51,6 +51,7 @@ namespace ConstellationWebApp.ViewModels
         [StringLength(30)]
         public string Seeking { get; set; }
 
+        public string PhotoPath { get; set; }
 
         /*[RegularExpression("([0-9a-zA-Z :\\-_!@$%^&*()])+(.jpg|.JPG|.jpeg|.JPEG|.bmp|.BMP|.gif|.GIF|.psd|.PSD)$")]*/
         public IFormFile Photo { get; set; }

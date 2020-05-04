@@ -2,11 +2,19 @@
 
 @{
     ViewData["Title"] = "Edit";
+
+    var photoPath = "~/image/" + Model.PhotoPath;
+}
 }
 
 <h1>Edit</h1>
 
 <h4>User</h4>
+<div class="imageThumbnail">
+    @{
+        <img class="imageThumbnail" src=" @photoPath" alt="@Html.DisplayFor(model => model.UserName)" asp-append-version="true" />
+    }
+</div>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -94,4 +102,3 @@
 
 
 @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

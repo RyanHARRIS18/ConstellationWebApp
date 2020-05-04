@@ -135,29 +135,47 @@ namespace ConstellationWebApp.Controllers
         }
 
         // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(int? UserID)
+        public async Task<IActionResult> Edit(int? id)
         {
-            if (UserID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User.FindAsync(UserID);
-            if (user == null)
+            var entityProjectModel = await _context.User
+                .Include(i => i.UserProjects)
+                .ThenInclude(i => i.Project)
+                .Include(i => i.ContactLinks)
+                .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.UserID == id);
+
+            if (entityProjectModel == null)
             {
                 return NotFound();
             }
-            return View(user);
+            UserCreateViewModel viewModel = new UserCreateViewModel
+            {
+                UserID = entityProjectModel.UserID,
+                UserName = entityProjectModel.UserName,
+                Password = entityProjectModel.Password,
+                FirstName = entityProjectModel.FirstName,
+                LastName = entityProjectModel.LastName,
+                Bio = entityProjectModel.Bio,
+                Seeking = entityProjectModel.Seeking,
+                PhotoPath = entityProjectModel.PhotoPath
+            };
+            return View(viewModel);
         }
+
 
         // POST: Users/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int UserID, UserCreateViewModel model, string[] createdLinkLabels, string[] createdLinkUrls)
+        public async Task<IActionResult> Edit(int id, [Bind("UserID,UserName,Password,FirstName,LastName,Bio,Seeking,PhotoPath,ContactLinkOne,ContactLinkTwo,ContactLinkThree")] User user)
         {
-            if (UserID != model.UserID)
+            if (id != user.UserID)
             {
                 return NotFound();
             }
@@ -166,12 +184,12 @@ namespace ConstellationWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(model);
+                    _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(model.UserID))
+                    if (!UserExists(user.UserID))
                     {
                         return NotFound();
                     }
@@ -182,7 +200,7 @@ namespace ConstellationWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(model);
+            return View(user);
         }
 
         // GET: Users/Delete/5

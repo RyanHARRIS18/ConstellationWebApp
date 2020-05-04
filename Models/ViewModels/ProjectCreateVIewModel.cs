@@ -11,6 +11,8 @@ namespace ConstellationWebApp.ViewModels
 {
     public class ProjectCreateViewModel
     {
+        public int  ProjectID { get; set; }
+
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters.")]
         [Required]
         public string Title { get; set; }
