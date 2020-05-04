@@ -17,6 +17,9 @@ namespace ConstellationWebApp.Data
          public DbSet<User> User { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<UserProject> UserProjects { get; set; }
+        public DbSet<ContactLink> ContactLinks { get; set; }
+        public DbSet<ProjectLink> ProjectLinks { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,10 +37,18 @@ namespace ConstellationWebApp.Data
                 .WithMany(c => c.UserProjects)
                 .HasForeignKey(bc => bc.ProjectID);
 
-       /*    modelBuilder.Entity<ProjecLink>()
-            .HasOne<Project>(s => s.Project)
-            .WithMany(g => g.Projects)
-            .HasForeignKey(s => s.ProjectLinkID);*/
+            modelBuilder.Entity<User>()
+               .HasMany(c => c.ContactLinks)
+               .WithOne(e => e.Users);
+
+            modelBuilder.Entity<Project>()
+             .HasMany(c => c.ProjectLinks)
+             .WithOne(e => e.Projects);
+
+            /*    modelBuilder.Entity<ProjecLink>()
+                 .HasOne<Project>(s => s.Project)
+                 .WithMany(g => g.Projects)
+                 .HasForeignKey(s => s.ProjectLinkID);*/
         }
     }
     

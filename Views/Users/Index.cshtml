@@ -1,19 +1,19 @@
-﻿@model IEnumerable<ConstellationWebApp.Models.User>
+﻿@model ConstellationWebApp.Models.ViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Users Index</h1>
 
 <p>
     <a asp-action="Create">Create New User</a>
 </p>
-    @foreach (var item in Model)
-    {
-        var photoPath = "~/image/" + (item.PhotoPath);
+@foreach (var item in Model.Users)
+{
+    var photoPath = "~/image/" + (item.PhotoPath);
 
-    <div class="project-cards">
+<div class="project-cards">
     @*Note: We do not want to display the PhotoPath Path but the image itself*@
     <div>
         <img class="imageThumbnail" src=" @photoPath" alt="@Html.DisplayFor(modelItem => item.UserName)" asp-append-version="true" />
@@ -41,10 +41,17 @@
         @Html.DisplayFor(modelItem => item.Seeking)
 
     </div>
+    <h4>Contact Links</h4>
+    @foreach (var link in item.ContactLinks)
+    {
+        @Html.DisplayFor(modelItem => link.ContactLinkUrl)
+        <br />
+    }
+
     <div>
         <a asp-action="Edit" asp-route-id="@item.UserID">Edit</a> |
         <a asp-action="Details" asp-route-id="@item.UserID">Details</a> |
         <a asp-action="Delete" asp-route-id="@item.UserID">Delete</a>
     </div>
-    </div>
-    }
+</div>
+}

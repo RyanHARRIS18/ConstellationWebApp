@@ -1,4 +1,4 @@
-﻿@model ConstellationWebApp.Models.User
+﻿@model ConstellationWebApp.ViewModels.UserCreateViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -43,11 +43,29 @@
                 <input asp-for="Seeking" class="form-control" />
                 <span asp-validation-for="Seeking" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="PhotoPath" class="control-label"></label>
-                <input asp-for="PhotoPath" class="form-control" />
-                <span asp-validation-for="PhotoPath" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="Photo" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <div class="custom-file">
+                        <input asp-for="Photo" class="form-control custom-file-input" />
+                        <label class="custom-file-label">Choose File ...</label>
+                    </div>
+                </div>
             </div>
+
+            @* Create the Contact Links for the User *@
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <h4>Link Label</h4>
+                    <input list='contact-link-label' name='createdLinkLabels'>
+                    <h4>Link URL</h4>
+                    <input list='contact-link-url' name='createdLinkUrls'>
+
+                    <div id="demo"></div>
+                    <input type="button" id="more_fields" onclick="add_fields();" value="Add Link" />
+                </div>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -59,6 +77,21 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    $(document).ready(function () {
+        $('.custom-file-input').on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).next('.custom-file-label').html(fileName);
+        });
+</script>
+
+<script>
+    function add_fields() {
+        document.getElementById("demo").innerHTML += "<h2>Link Label</h2><input list='contact-link-label' name='createdLinkLabels'><h2>Link URL</h2> <input list='contact-link-url' name='createdLinkUrls'>";
+
+    }
+</script>
+
+
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

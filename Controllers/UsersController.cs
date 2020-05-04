@@ -28,10 +28,33 @@ namespace ConstellationWebApp.Controllers
 
         }
 
+        private void PopulateAssignedProjectData(Project newProject)
+        {
+            var allUsers = _context.User;
+            var userProjects = new HashSet<int>(newProject.UserProjects.Select(c => c.UserID));
+            var viewModel = new List<AssignedProjectData>();
+            foreach (var users in allUsers)
+            {
+                viewModel.Add(new AssignedProjectData
+                {
+                    UserID = users.UserID,
+                    UserName = users.UserName,
+                    Assigned = userProjects.Contains(users.UserID)
+                });
+            }
+            ViewData["UsersOfConstellation"] = viewModel;
+        }
+
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.User.ToListAsync());
+            var viewModel = new ViewModel();
+            viewModel.Users = await _context.User
+                  .Include(i => i.ContactLinks)
+                   .AsNoTracking()
+                   .OrderBy(i => i.UserID)
+                   .ToListAsync();
+            return View(viewModel);
         }
 
         // GET: Users/Details/5
@@ -63,7 +86,7 @@ namespace ConstellationWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserCreateViewModel model, string[] createdLinkLabels, string[] createdLinkUls)
+        public async Task<IActionResult> Create(UserCreateViewModel model, string[] createdLinkLabels, string[] createdLinkUrls)
         {
             if (ModelState.IsValid)
             {
@@ -91,29 +114,19 @@ namespace ConstellationWebApp.Controllers
 
                 if (createdLinkLabels != null)
                 {
-                    var linkData = createdLinkLabels.Join(createdLinkUls, label => label, url => url, (label, url) => new { labelCol = label, urlCol = url });
-
-                    foreach (var link in linkData)
+                    for (var i = 0; i < createdLinkLabels.Length; i++)
                     {
-
-                        try
+                        ContactLink newContact = new ContactLink
                         {
-                            ContactLink contactLink = new ContactLink
-                            {
-                                ContactLinkLabel = link.labelCol,
-                                ContactLinkUrl = link.urlCol
-                            };
+                            ContactLinkLabel = createdLinkLabels[i],
+                            ContactLinkUrl = createdLinkUrls[i],
+                            Users = newUser
+                        };
 
-                            _context.Add(contactLink);
-                            await _context.SaveChangesAsync();
-                        }
-                        catch (InvalidOperationException e)
-                        {
-                            Console.WriteLine($"The link or label was not found or was not in valid format: '{e}'");
-                        }
+                    _context.Add(newContact);
 
-                    }
                 }
+            }
                 _context.Add(newUser);
                     await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -122,14 +135,14 @@ namespace ConstellationWebApp.Controllers
         }
 
         // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? UserID)
         {
-            if (id == null)
+            if (UserID == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.User.FindAsync(UserID);
             if (user == null)
             {
                 return NotFound();
@@ -142,9 +155,9 @@ namespace ConstellationWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserID,UserName,Password,FirstName,LastName,Bio,Seeking,PhotoPath,ContactLinkOne,ContactLinkTwo,ContactLinkThree")] User user)
+        public async Task<IActionResult> Edit(int UserID, UserCreateViewModel model, string[] createdLinkLabels, string[] createdLinkUrls)
         {
-            if (id != user.UserID)
+            if (UserID != model.UserID)
             {
                 return NotFound();
             }
@@ -153,12 +166,12 @@ namespace ConstellationWebApp.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    _context.Update(model);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.UserID))
+                    if (!UserExists(model.UserID))
                     {
                         return NotFound();
                     }
@@ -169,7 +182,7 @@ namespace ConstellationWebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return View(model);
         }
 
         // GET: Users/Delete/5
@@ -195,6 +208,17 @@ namespace ConstellationWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
+            var contactLinks = from m in _context.ContactLinks
+                               select m;
+
+            var linksId = contactLinks.Where(s => s.Users.UserID == id);
+
+            foreach (var link in linksId)
+            {
+                _context.ContactLinks.Remove(link);
+            }
+
             var user = await _context.User.FindAsync(id);
             _context.User.Remove(user);
             await _context.SaveChangesAsync();

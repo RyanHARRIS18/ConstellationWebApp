@@ -2,7 +2,7 @@
 @model ConstellationWebApp.ViewModels.ProjectCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create a Project";
 }
 
 <h1>Create New Project</h1>
@@ -41,80 +41,70 @@
                     </div>
                 </div>
             </div>
-            @*<div class="form-group">
+
+            <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <table>
-                        <tr>
-                            @{
-                                int cnt = 0;
-                                List<ConstellationWebApp.Models.AssignedProjectData> users = ViewBag.UsersOfConstellation;
+                    <datalist id="user-list">
+                        @{
+                            List<ConstellationWebApp.Models.AssignedProjectData> usersCollab = ViewBag.UsersOfConstellation;
 
-                                foreach (var user in users)
-                                {
-                                    if (cnt++ % 3 == 0)
-                                    {
-                                    @:</tr><tr>
-                                    }
-                                    @:<td>
-                                        <input type="checkbox"
-                                               name="selectedCollaborators"
-                                               value="@user.UserID"
-                                               @(Html.Raw(user.Assigned ? "checked=\"checked\"" : "")) />
-                                        @user.UserName
-                                    @:</td>
-                                }
-                            @:</tr>
+                            foreach (var user in usersCollab)
+                            {
+                                <option value="@user.UserName" data-id="@user.UserID"></option>
                             }
-                        </table>
+                        @:</datalist>
+                    @:</div>
+                        }
                     </div>
-                </div>*@
 
+                    <input list="user-list" name="selectedCollaborators">
 
+                    <div id="demo"></div>
+                    <input type="button" id="more_fields" onclick="add_collab();" value="Add Collaborator" />
 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <datalist id="user-list">
-                            @{
-                                List<ConstellationWebApp.Models.AssignedProjectData> usersCollab = ViewBag.UsersOfConstellation;
+                    @* Create the Contact Links for the User *@
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <h2>Link Label</h2>
+                            <input list='contact-link-label' name='createdLinkLabels'>
+                            <h2>Link URL</h2>
+                            <input list='contact-link-url' name='createdLinkUrls'>
 
-                                foreach (var user in usersCollab)
-                                {
-                                    <option value="@user.UserName" data-id="@user.UserID"></option>
-                                }
-                            @:</datalist>
-                        @:</div>
-                            }
+                            <div id="linkDemo"></div>
+                            <input type="button" id="more_fields" onclick="add_fields();" value="Add Link" />
                         </div>
-
-                        <input list="user-list" name="selectedCollaborators">
-                 
-                        <div id="demo"></div>
-                        <input type="button" id="more_fields" onclick="add_fields();" value="Add Collaborator" />
-
-                        <div class="form-group">
-                            <input type="submit" value="Create" class="btn btn-primary" />
-                        </div>
-                    </form>
-                    <div>
-                        <a asp-action="Index">Back to List</a>
                     </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+                <div>
+                    <a asp-action="Index">Back to List</a>
                 </div>
             </div>
+        </div>
 
 
-            @section Scripts {
-                <script>
-                    $(document).ready(function () {
-                        $('.custom-file-input').on("change", function () {
-                            var fileName = $(this).val().split("\\").pop();
-                            $(this).next('.custom-file-label').html(fileName);
-                        });
-                </script>
-                <script>
-                 function add_fields() {
-                              document.getElementById("demo").innerHTML += "<input list='user-list'   name='selectedCollaborators'> ";
-                            }
-                </script>
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+                    $('.custom-file-input').on("change", function () {
+                        var fileName = $(this).val().split("\\").pop();
+                        $(this).next('.custom-file-label').html(fileName);
+                    });
+            </script>
+            <script>
+                function add_collab() {
+                    document.getElementById("demo").innerHTML += "<input list='user-list'   name='selectedCollaborators'> ";
+                }
+            </script>
+            <script>
+                function add_fields() {
+                    document.getElementById("linkDemo").innerHTML += "<h2>Link Label</h2><input list='contact-link-label' name='createdLinkLabels'><h2>Link URL</h2> <input list='contact-link-url' name='createdLinkUrls'>";
 
-                @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-            }
+                }
+            </script>
+
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }

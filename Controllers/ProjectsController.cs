@@ -33,6 +33,7 @@ namespace ConstellationWebApp.Controllers
             viewModel.Projects = await _context.Projects
                    .Include(i => i.UserProjects)
                      .ThenInclude(i => i.User)
+                      .Include(i => i.ProjectLinks)
                    .AsNoTracking()
                    .OrderBy(i => i.CreationDate)
                    .ToListAsync();
@@ -97,7 +98,7 @@ namespace ConstellationWebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProjectCreateViewModel model, string[] selectedCollaborators)
+        public async Task<IActionResult> Create(ProjectCreateViewModel model, string[] selectedCollaborators, string[] createdLinkLabels, string[] createdLinkUrls)
         {
             if (ModelState.IsValid)
             {
@@ -155,7 +156,24 @@ namespace ConstellationWebApp.Controllers
 
                       
                     }
-                   await _context.SaveChangesAsync();
+
+                    if (createdLinkLabels != null)
+                    {
+                        for (var i = 0; i < createdLinkLabels.Length; i++)
+                        {
+                            ProjectLink newContact = new ProjectLink
+                            {
+                                ProjectLinkLabel = createdLinkLabels[i],
+                                ProjectLinkUrl = createdLinkUrls[i],
+                                Projects = newProject
+                            };
+
+                            _context.Add(newContact);
+
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
                    return RedirectToAction(nameof(Index));
                     }
               PopulateAssignedProjectData(newProject);
@@ -253,6 +271,15 @@ namespace ConstellationWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var projectLinks = from m in _context.ProjectLinks
+                         select m;
+
+            var linksId = projectLinks.Where(s => s.Projects.ProjectID == id);
+
+            foreach (var link in linksId) {
+                _context.ProjectLinks.Remove(link);
+            }
+
             var project = await _context.Projects.FindAsync(id);
             _context.Projects.Remove(project);
             await _context.SaveChangesAsync();

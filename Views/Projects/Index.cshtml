@@ -7,7 +7,7 @@
 <h1>Constellation Projects</h1>
 
 <p>
-    <a asp-action="Create">Creat A New Project</a>
+    <a asp-action="Create">Create A New Project</a>
 </p>
 
 @* Take this to an actual css later *@
@@ -49,16 +49,26 @@
     <h4>Collaborators</h4>
     @foreach (var collab in item.UserProjects)
     {
-         var collabPath = "~/image/" + (collab.User.PhotoPath);
-         @*@collab.User.UserName<br />*@
-        <img class="smallThumbnail" src=" @collabPath" alt="@Html.DisplayFor(modelItem => item.Title)" asp-append-version="true" />
-    }
+        var collabPath = "~/image/" + (collab.User.PhotoPath);
+        /*  var collabMemberPath = "https://Constellation/Users/" + (collab.User.UserID);            ~ Production Variable needs the domain name*/ 
+         var collabMemberPath = "https://localhost:44359/Users/Details/" + (collab.User.UserID);      
 
-    <div>
-        <a asp-action="Edit" asp-route-id="@item.ProjectID">Edit</a> |
-        <a asp-action="Details" asp-route-id="@item.ProjectID">Details</a> |
-        <a asp-action="Delete" asp-route-id="@item.ProjectID">Delete</a>
+        @*@collab.User.UserName<br />*@
+        <a href="@collabMemberPath"><img class="smallThumbnail" src=" @collabPath" alt="@Html.DisplayFor(modelItem => collab.User.UserName)" asp-append-version="true" /></a>
+     }
+
+            <h4>Project Links</h4>
+            @foreach (var link in item.ProjectLinks)
+            {
+                @Html.DisplayFor(modelItem => link.ProjectLinkUrl)
+                <br />
+            }
+
+            <div>
+                <a asp-action="Edit" asp-route-id="@item.ProjectID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ProjectID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ProjectID">Delete</a>
+            </div>
     </div>
-</div>
 }
 

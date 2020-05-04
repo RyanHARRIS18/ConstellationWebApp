@@ -1,7 +1,7 @@
 ﻿@model ConstellationWebApp.ViewModels.UserCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create a User";
 }
 
 <h1>Create</h1>
@@ -55,9 +55,10 @@
             @* Create the Contact Links for the User *@
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-
+                    <h4>Link Label</h4>
                     <input list='contact-link-label' name='createdLinkLabels'>
-                    <input list='contact-link-url' name='createdLinkUls'>
+                    <h4>Link URL</h4>
+                    <input list='contact-link-url' name='createdLinkUrls'>
 
                     <div id="demo"></div>
                     <input type="button" id="more_fields" onclick="add_fields();" value="Add Link" />
@@ -86,7 +87,7 @@
 
     <script>
         function add_fields() {
-            document.getElementById("demo").innerHTML += "<input list='contact-link-label' name='selectedCollaborators'><input list='contact-link-url' name='selectedCollaborators'>";
+            document.getElementById("demo").innerHTML += "<h2>Link Label</h2><input list='contact-link-label' name='createdLinkLabels'><h2>Link URL</h2> <input list='contact-link-url' name='createdLinkUrls'>";
 
         }
     </script>
