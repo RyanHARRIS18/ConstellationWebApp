@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using ConstellationWebApp.ViewModels;
 using System.Dynamic;
-
+using ConstellationWebApp.Models.ViewModels;
 
 namespace ConstellationWebApp.Controllers
 {
@@ -20,29 +20,99 @@ namespace ConstellationWebApp.Controllers
         private readonly ConstellationWebAppContext _context;
         private readonly IWebHostEnvironment hostingEnvironment;
 
-
         public UsersController(ConstellationWebAppContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
             this.hostingEnvironment = hostingEnvironment;
 
         }
-
-        private void PopulateAssignedProjectData(Project newProject)
+  
+        private string ValidateImagePath(UserCreateViewModel model)
         {
-            var allUsers = _context.User;
-            var userProjects = new HashSet<int>(newProject.UserProjects.Select(c => c.UserID));
-            var viewModel = new List<AssignedProjectData>();
-            foreach (var users in allUsers)
+            string uniqueFileName = null;
+            if (!(System.IO.Path.GetExtension(model.Photo.FileName) == ".png" || System.IO.Path.GetExtension(model.Photo.FileName) == ".jpg"))
             {
-                viewModel.Add(new AssignedProjectData
-                {
-                    UserID = users.UserID,
-                    UserName = users.UserName,
-                    Assigned = userProjects.Contains(users.UserID)
-                });
+                model.Photo = null;
             }
-            ViewData["UsersOfConstellation"] = viewModel;
+            if (model.Photo != null)
+            {
+                string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath + "\\image\\");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+            return(uniqueFileName);
+        }
+
+        private void CreateLinksValidation(string[] createdLinkLabels, string[] createdLinkUrls, User newUser)
+        {
+            if (createdLinkLabels != null)
+            {
+                for (var i = 0; i < createdLinkLabels.Length; i++)
+                {
+                    ContactLink newContact = new ContactLink
+                    {
+                        ContactLinkLabel = createdLinkLabels[i],
+                        ContactLinkUrl = createdLinkUrls[i],
+                        Users = newUser
+                    };
+                    _context.Add(newContact);
+                }
+            }
+        }
+
+        private UserEditViewModel userToEditViewModel(User entityProjectModel)
+        {
+            UserEditViewModel viewModel = new UserEditViewModel
+            {
+                UserID = entityProjectModel.UserID,
+                UserName = entityProjectModel.UserName,
+                Password = entityProjectModel.Password,
+                FirstName = entityProjectModel.FirstName,
+                LastName = entityProjectModel.LastName,
+                Bio = entityProjectModel.Bio,
+                Seeking = entityProjectModel.Seeking,
+                OldPhotoPath = entityProjectModel.PhotoPath,
+                PhotoPath = entityProjectModel.PhotoPath
+            };
+            return(viewModel);
+        }
+
+        private User ViewModeltoUser(UserCreateViewModel model, string uniqueFileName)
+        {
+            User newUser = new User
+            {
+                UserName = model.UserName,
+                Password = model.Password,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Bio = model.Bio,
+                Seeking = model.Seeking,
+                PhotoPath = uniqueFileName
+            };
+            return (newUser);
+        }
+
+        private void RemoveAllContactLinks(int id)
+        {
+            var contactLinks = from m in _context.ContactLinks
+                               select m;
+
+            var linksId = contactLinks.Where(s => s.Users.UserID == id);
+
+            foreach (var link in linksId)
+            {
+                _context.ContactLinks.Remove(link);
+            }
+        }
+
+        private void DeletePhoto(UserEditViewModel model)
+        {
+            if (model.OldPhotoPath != null)
+            {
+                string filePath = Path.Combine(hostingEnvironment.WebRootPath, "image", model.OldPhotoPath);
+                System.IO.File.Delete(filePath);
+            }
         }
 
         // GET: Users
@@ -90,46 +160,12 @@ namespace ConstellationWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                    string uniqueFileName = null;
-
-                    if (model.Photo != null)
-                    {
-                        string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath + "\\image\\");
-                        uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
-                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                        model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
-                    }
-
-                    User newUser = new User
-                    {             
-                        UserID           = model.UserID,
-                        UserName         = model.UserName,
-                        Password         = model.Password,
-                        FirstName        = model.FirstName,
-                        LastName         = model.LastName,
-                        Bio              = model.Bio,
-                        Seeking          = model.Seeking,
-                        PhotoPath        = uniqueFileName
-                    };
-
-                if (createdLinkLabels != null)
-                {
-                    for (var i = 0; i < createdLinkLabels.Length; i++)
-                    {
-                        ContactLink newContact = new ContactLink
-                        {
-                            ContactLinkLabel = createdLinkLabels[i],
-                            ContactLinkUrl = createdLinkUrls[i],
-                            Users = newUser
-                        };
-
-                    _context.Add(newContact);
-
-                }
-            }
-                _context.Add(newUser);
-                    await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+             var uniqueFileName = ValidateImagePath(model);
+             User newUser = ViewModeltoUser(model, uniqueFileName);
+             CreateLinksValidation(createdLinkLabels, createdLinkUrls, newUser);
+             _context.Add(newUser);
+             await _context.SaveChangesAsync();
+             return RedirectToAction(nameof(Index));
             }
             return View();
         }
@@ -141,7 +177,6 @@ namespace ConstellationWebApp.Controllers
             {
                 return NotFound();
             }
-
             var entityProjectModel = await _context.User
                 .Include(i => i.UserProjects)
                 .ThenInclude(i => i.Project)
@@ -153,17 +188,7 @@ namespace ConstellationWebApp.Controllers
             {
                 return NotFound();
             }
-            UserCreateViewModel viewModel = new UserCreateViewModel
-            {
-                UserID = entityProjectModel.UserID,
-                UserName = entityProjectModel.UserName,
-                Password = entityProjectModel.Password,
-                FirstName = entityProjectModel.FirstName,
-                LastName = entityProjectModel.LastName,
-                Bio = entityProjectModel.Bio,
-                Seeking = entityProjectModel.Seeking,
-                PhotoPath = entityProjectModel.PhotoPath
-            };
+            var viewModel = userToEditViewModel(entityProjectModel);
             return View(viewModel);
         }
 
@@ -173,31 +198,38 @@ namespace ConstellationWebApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserID,UserName,Password,FirstName,LastName,Bio,Seeking,PhotoPath,ContactLinkOne,ContactLinkTwo,ContactLinkThree")] User user)
+        public async Task<IActionResult> Edit(int id, string OldPhotoPath, string[] createdLinkLabels, string[] createdLinkUrls, UserEditViewModel model)
         {
-            if (id != user.UserID)
+            var user = await _context.User.FindAsync(id);
+
+            if (id != model.UserID)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                    string uniqueFileName = OldPhotoPath;
+                    if (model.Photo != null)
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    DeletePhoto(model);
+                    uniqueFileName = ValidateImagePath(model);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
+                user.UserName = model.UserName;
+                user.Password = model.Password;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Bio = model.Bio;
+                user.Seeking = model.Seeking;
+                user.PhotoPath = uniqueFileName;
+                        _context.Update(user);
+                        await _context.SaveChangesAsync();
+                        CreateLinksValidation(createdLinkLabels, createdLinkUrls, user);
+                    
                     if (!UserExists(user.UserID))
                     {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                    }               
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -226,18 +258,11 @@ namespace ConstellationWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-
-            var contactLinks = from m in _context.ContactLinks
-                               select m;
-
-            var linksId = contactLinks.Where(s => s.Users.UserID == id);
-
-            foreach (var link in linksId)
-            {
-                _context.ContactLinks.Remove(link);
-            }
+            RemoveAllContactLinks(id);
 
             var user = await _context.User.FindAsync(id);
+            var viewModel = userToEditViewModel(user);
+            DeletePhoto(viewModel);
             _context.User.Remove(user);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

@@ -9,19 +9,9 @@ namespace ConstellationWebApp.ViewModels
 {
     public class UserCreateViewModel
     {
-        public int UserID { get; set; }
-
         [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters.")]
         [Required]
         public string UserName { get; set; }
-
-        //The following regular expression is for a 4 to 8 char password and 
-        //containing at least an alphabet and one Number.You can change numbers 
-        //in the end to your allowed password length. ~ using this for testing/dev
-
-        // "^.*(?=.{10,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$" 
-        //is for the regular expression for validating a password with the condition 
-        //that Password should contain at least an alphabet and one Symbol or Number. - use this in deployment
 
         /* [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{4,15}$")]*/
         [Required]
@@ -51,6 +41,7 @@ namespace ConstellationWebApp.ViewModels
         [StringLength(30)]
         public string Seeking { get; set; }
 
+     
         public string PhotoPath { get; set; }
 
         /*[RegularExpression("([0-9a-zA-Z :\\-_!@$%^&*()])+(.jpg|.JPG|.jpeg|.JPEG|.bmp|.BMP|.gif|.GIF|.psd|.PSD)$")]*/

@@ -1,15 +1,12 @@
-﻿@model ConstellationWebApp.ViewModels.UserCreateViewModel
+﻿@model ConstellationWebApp.Models.ViewModels.UserEditViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit User";
 
-    var photoPath = "~/image/" + Model.PhotoPath;
+    var photoPath = "~/image/" + (Model.OldPhotoPath);
 }
-}
+<h1>Edit User</h1>
 
-<h1>Edit</h1>
-
-<h4>User</h4>
 <div class="imageThumbnail">
     @{
         <img class="imageThumbnail" src=" @photoPath" alt="@Html.DisplayFor(model => model.UserName)" asp-append-version="true" />
@@ -18,9 +15,10 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form enctype="multipart/form-data" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="UserID" />
+            <input type="hidden" asp-for="OldPhotoPath" />
             <div class="form-group">
                 <label asp-for="UserName" class="control-label"></label>
                 <input asp-for="UserName" class="form-control" />
@@ -75,7 +73,7 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Update" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -85,20 +83,29 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<script>
-    $(document).ready(function () {
-        $('.custom-file-input').on("change", function () {
-            var fileName = $(this).val().split("\\").pop();
-            $(this).next('.custom-file-label').html(fileName);
-        });
-</script>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+    </script>
+    <script>
+        function add_collab() {
+            document.getElementById("demo").innerHTML += "<input list='user-list'   name='selectedCollaborators'> ";
+        }
+    </script>
+    <script>
+        function add_fields() {
+            document.getElementById("linkDemo").innerHTML += "<h2>Link Label</h2><input list='contact-link-label' name='createdLinkLabels'><h2>Link URL</h2> <input list='contact-link-url' name='createdLinkUrls'>";
 
-<script>
-    function add_fields() {
-        document.getElementById("demo").innerHTML += "<h2>Link Label</h2><input list='contact-link-label' name='createdLinkLabels'><h2>Link URL</h2> <input list='contact-link-url' name='createdLinkUrls'>";
+        }
+    </script>
 
-    }
-</script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
 
 
 @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -1,8 +1,8 @@
 ﻿@* Create Project Page should be accesible from each user page and should be itegrated into thenavigation bar - it should automatically create a collaborator from the current user ID *@
-@model ConstellationWebApp.ViewModels.ProjectCreateViewModel
+@model ConstellationWebApp.Models.ViewModels.ProjectEditViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Project";
 
     List<ConstellationWebApp.Models.Project> project = ViewBag.ProjectViewBag;
     var photoPath = "~/image/" + Model.PhotoPath;
@@ -17,8 +17,10 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProjectID" />
+            <input type="hidden" asp-for="OldPhotoPath" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -68,7 +70,6 @@
                     <div id="demo"></div>
                     <input type="button" id="more_fields" onclick="add_collab();" value="Add Collaborator" />
 
-                    @* Create the Contact Links for the User *@
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10">
                             <h4>Link Label</h4>
@@ -82,7 +83,7 @@
                     </div>
 
                     <div class="form-group">
-                        <input type="submit" value="Save" class="btn btn-primary" />
+                        <input type="submit" value="Update" class="btn btn-primary" />
                     </div>
                 </form>
                 <div>
@@ -91,7 +92,6 @@
             </div>
         </div>
 
-
         @section Scripts {
             <script>
                 $(document).ready(function () {
@@ -99,6 +99,7 @@
                         var fileName = $(this).val().split("\\").pop();
                         $(this).next('.custom-file-label').html(fileName);
                     });
+                });
             </script>
             <script>
                 function add_collab() {
