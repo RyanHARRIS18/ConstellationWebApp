@@ -72,24 +72,30 @@ body {
 
 
 .imageThumbnail {
-    height: 100px;
+    border-radius: 20%;
+    height: 150px;
     width: auto;
     text-align: center;
     display: block;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 2em;
 }
 
 .smallThumbnail {
     height: 50px;
     width: auto;
     display: inline;
+    border-radius: 20%;
 }
 
 .project-cards {
     border: groove;
+    border-radius: 10%;
     padding: 2em;
     display: inline-block;
+    background-color: aliceblue;
+    color: black;
 }
 
 

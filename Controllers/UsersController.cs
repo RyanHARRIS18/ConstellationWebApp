@@ -36,15 +36,15 @@ namespace ConstellationWebApp.Controllers
             }
             if (model.Photo != null)
             {
+                uniqueFileName = System.IO.Path.GetFileName(model.Photo.FileName);
                 string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath + "\\image\\");
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
             return(uniqueFileName);
         }
 
-        private void CreateLinksValidation(string[] createdLinkLabels, string[] createdLinkUrls, User newUser)
+        private void CreateUserLinks(string[] createdLinkLabels, string[] createdLinkUrls, User newUser)
         {
             if (createdLinkLabels != null)
             {
@@ -114,7 +114,6 @@ namespace ConstellationWebApp.Controllers
                 System.IO.File.Delete(filePath);
             }
         }
-
         // GET: Users
         public async Task<IActionResult> Index()
         {
@@ -162,7 +161,7 @@ namespace ConstellationWebApp.Controllers
             {
              var uniqueFileName = ValidateImagePath(model);
              User newUser = ViewModeltoUser(model, uniqueFileName);
-             CreateLinksValidation(createdLinkLabels, createdLinkUrls, newUser);
+              CreateUserLinks(createdLinkLabels, createdLinkUrls, newUser);
              _context.Add(newUser);
              await _context.SaveChangesAsync();
              return RedirectToAction(nameof(Index));
@@ -212,8 +211,8 @@ namespace ConstellationWebApp.Controllers
                     string uniqueFileName = OldPhotoPath;
                     if (model.Photo != null)
                 {
-                    DeletePhoto(model);
                     uniqueFileName = ValidateImagePath(model);
+                    DeletePhoto(model);
                 }
                 user.UserName = model.UserName;
                 user.Password = model.Password;
@@ -224,12 +223,9 @@ namespace ConstellationWebApp.Controllers
                 user.PhotoPath = uniqueFileName;
                         _context.Update(user);
                         await _context.SaveChangesAsync();
-                        CreateLinksValidation(createdLinkLabels, createdLinkUrls, user);
-                    
-                    if (!UserExists(user.UserID))
-                    {
-                        return NotFound();
-                    }               
+                        
+                CreateUserLinks(createdLinkLabels, createdLinkUrls, user);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(user);

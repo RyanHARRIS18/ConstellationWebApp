@@ -27,7 +27,7 @@ namespace ConstellationWebApp.Controllers
             this.hostingEnvironment = hostingEnvironment;
         }
 
-        private void ProjectLinkCreation(string[] createdLinkLabels, string[] createdLinkUrls, Project newProject)
+        private void CreateProjectLinks(string[] createdLinkLabels, string[] createdLinkUrls, Project newProject)
         {
             if (createdLinkLabels != null)
             {
@@ -53,8 +53,8 @@ namespace ConstellationWebApp.Controllers
             }
             if (model.Photo != null)
             {
+                uniqueFileName = System.IO.Path.GetFileName(model.Photo.FileName);
                 string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath + "\\image\\");
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
             }
@@ -133,7 +133,6 @@ namespace ConstellationWebApp.Controllers
                 StartDate = entityProjectModel.StartDate,
                 EndDate = entityProjectModel.EndDate,
                 CreationDate = entityProjectModel.CreationDate,
-                PhotoPath = entityProjectModel.PhotoPath,
                 OldPhotoPath = entityProjectModel.PhotoPath
             };
         }
@@ -213,7 +212,7 @@ namespace ConstellationWebApp.Controllers
                         }
                     }
 
-                    ProjectLinkCreation(createdLinkLabels, createdLinkUrls, newProject);
+                    CreateProjectLinks(createdLinkLabels, createdLinkUrls, newProject);
 
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -265,8 +264,8 @@ namespace ConstellationWebApp.Controllers
                 string uniqueFileName = OldPhotoPath;
                 if (model.Photo != null)
                 {
-                    DeletePhoto(model);
                     uniqueFileName = ValidateImagePath(model);
+                    DeletePhoto(model);
                 }
                 project.Title = model.Title;
                 project.Description = model.Description;
@@ -276,16 +275,40 @@ namespace ConstellationWebApp.Controllers
                 project.PhotoPath = uniqueFileName;
                 _context.Update(project);
                 await _context.SaveChangesAsync();
-                ProjectLinkCreation(createdLinkLabels, createdLinkUrls, project);
 
-                if (!ProjectExists(model.ProjectID))
+                if (selectedCollaborators != null)
+                {
+                    model.UserProjects = new List<UserProject>();
+                    foreach (var user in selectedCollaborators)
                     {
-                        return NotFound();
+                        try
+                        {
+                            var userid = (from a in _context.User
+                                          where a.UserName == user
+                                          select a).First<User>().UserID;
+
+                            UserProject userProjects = new UserProject
+                            {
+                                ProjectID = project.ProjectID,
+                                UserID = userid
+                            };
+
+                            _context.Add(userProjects);
+                        }
+                        catch (InvalidOperationException e)
+                        {
+                            Console.WriteLine($"The user was not found: '{e}'");
+                        }
                     }
-                  
-                return RedirectToAction(nameof(Index));
+
+                    CreateProjectLinks(createdLinkLabels, createdLinkUrls, project);
+
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                PopulateAssignedProjectData(project);
             }
-            return View(model);
+            return View();
         }
 
         // GET: Projects/Delete/5
@@ -295,15 +318,19 @@ namespace ConstellationWebApp.Controllers
             {
                 return NotFound();
             }
-
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(m => m.ProjectID == id);
-            if (project == null)
+            var entityProjectModel = await _context.Projects
+                .Include(i => i.UserProjects)
+                .ThenInclude(i => i.User)
+                .Include(i => i.ProjectLinks)
+                .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.ProjectID == id);
+            if (entityProjectModel == null)
             {
                 return NotFound();
             }
-
-            return View(project);
+            PopulateAssignedProjectData(entityProjectModel);
+            ProjectCreateViewModel viewModel = projectToViewModel(entityProjectModel);
+            return View(viewModel);
         }
 
         // POST: Projects/Delete/5
